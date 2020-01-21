@@ -11,6 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'ApiController@todoView');
+Route::get('/todoCreate', 'ApiController@todoCreate');
+Route::get('/todoUpdate/{id}', 'ApiController@todoUpdate');
