@@ -8,7 +8,7 @@ class ApiController extends Controller
 {
     public function todoView()
     {
-        return view('todoView');
+        return view('todo.view');
     }
 
     public function todoCreate()
@@ -18,6 +18,6 @@ class ApiController extends Controller
 
     public function todoUpdate($id)
     {
-        
+
     }
 }
