@@ -30,14 +30,16 @@
             <ul class="list-group" v-if="todoList.length != 0">
                 
                 <li class="list-group-item" v-for="(record, index) in todoList">
-                    <div class="checkbox">
+                    
+                    <div class="checkbox"  v-if="record.id != editTodoId">
                         <input type="checkbox" id="checkbox" class="checkbox checkbox-circle"/>
-                        <label v-on:click="showEditInput(record.id, record.name)" v-if="show">
+                        <label v-on:click="showEditInput(record.id, record.name)">
                             @{{ record.name }}
                         </label>
                     </div>
 
-                    <input type="text" class="form-control" v-model="editTodoValue" v-if="hide && record.index">
+                    <input type="text" class="form-control" v-model="editTodoValue" v-if="record.id == editTodoId" v-on:keyup.enter="setUpdateTodoList">
+                
                 </li>
 
                 <li class="list-group-item">
@@ -71,9 +73,7 @@
                 todoList: [],
                 insertTodoArray: [],
                 updateTodoArray: [],
-                show: true,
-                hide: false
-
+                
             },
 
             created: function () {
@@ -120,19 +120,23 @@
 
                 showEditInput: function (id, name)
                 {   
-                    let vm = this;
+                    let vm = this,
+                        setArr = [];
 
                     vm.editTodoValue = name;
-                    vm.editId = name;
-                    vm.show = false;
-                    vm.hide = true;
+                    vm.editTodoId = id;
 
-                    console.log(id);
-                    console.log(name);
+                },
+
+                setUpdateTodoList: function () 
+                {
+                    setArr['id'] = vm.editTodoValue;
+                    setArr['name'] = vm.editTodoId;
+                    
+                    vm.updateTodoArray.push(setArr);
+                    console.log(vm.updateTodoArray);
                 }
             }
-
-            
         });
     </script>
 
