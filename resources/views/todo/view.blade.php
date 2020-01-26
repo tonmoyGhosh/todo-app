@@ -25,23 +25,19 @@
 
         <div class="panel-body">
             
-            <input type="text" class="form-control" placeholder="Add Todo List" v-model="todoValue" v-on:keyup.enter="insertList">
-
-            <ul class="list-group" v-if="todoList.length">
+            <input type="text" class="form-control" placeholder="Add Todo List" v-model="todoValue" v-on:keyup.enter="setTodoList">
+            
+            <ul class="list-group" v-if="todoList.length != 0">
                 
                 <li class="list-group-item" v-for="(record, index) in todoList">
-
-                    <div class="checkbox" v-if="valueMatch != index">
+                    <div class="checkbox">
                         <input type="checkbox" id="checkbox" class="checkbox checkbox-circle"/>
-                        <label v-on:click="editForm(index, record)">
-                            @{{ record }}
+                        <label v-on:click="showEditInput(record.id, record.name)" v-if="show">
+                            @{{ record.name }}
                         </label>
                     </div>
 
-                    <div class="checkbox" v-if="updateSection">
-                        <input type="text" class="form-control" v-model="editValue" v-on:keyup.enter="updateList(record)" v-if="valueMatch == index"/>
-                    </div>
-                
+                    <input type="text" class="form-control" v-model="editTodoValue" v-if="hide && record.index">
                 </li>
 
                 <li class="list-group-item">
@@ -51,8 +47,9 @@
                         <a href="#">Completed</a>
                     </div>
                 </li>
+            
             </ul>
-
+        
         </div>
     
     </div>
@@ -62,53 +59,80 @@
 @section('script')
 
     <script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     <script>
         new Vue({
             el: '#app',
             data: {
                 todoValue: '',
+                editTodoValue: '',
+                editTodoId: '',
                 todoList: [],
-                listSection: true,
-                updateSection: false,
-                editValue: '',
-                valueMatch: -1,
-            },
-            methods: {
-                insertList: function () {
+                insertTodoArray: [],
+                updateTodoArray: [],
+                show: true,
+                hide: false
 
-                    let lengthArray = this.todoList.length;
+            },
+
+            created: function () {
+                
+                let vm = this;
+
+                axios.get("api/todoList")
+                    .then(function(response) {
+                       
+                        if(response.data.status == true)
+                           vm.todoList = response.data.data;
                     
-                    if(lengthArray == 0)
-                        this.todoList[0] = this.todoValue;
-                    else this.todoList[0+lengthArray] = this.todoValue;
-                    
-                    this.todoValue = '';
+                    })
+                    .catch(function(err) {
+                       console.log(err);
+                    })
+            },
+
+            methods: {
+
+                setTodoList: function ()
+                {   
+                    let vm = this,
+                        lastRecord,
+                        lastId,
+                        setArr = [];
+                        
+                    if(vm.todoList.length == 0) 
+                        lastId = 1;
+                    else 
+                    {   
+                        lastRecord = vm.todoList[vm.todoList.length - 1];
+                        lastId = lastRecord.id + 1;
+                    }
+
+                    setArr['id'] = lastId;
+                    setArr['name'] = vm.todoValue;
+
+                    vm.insertTodoArray.push(setArr);
+                    vm.todoList.push(setArr);
+                    vm.todoValue = '';
+                
                 },
 
-                // updateList: function (param) {
+                showEditInput: function (id, name)
+                {   
+                    let vm = this;
 
-                //     this.editActive = false;
-                //     for(i=0; i<this.todoList.length; i++)
-                //     {
-                //         if(this.todoList[i] == param)
-                //         {      
-                //             this.todoList[i] = param;
-                //             //ue.set(this.todoList, i, param);
-                //         }
-                //     }
+                    vm.editTodoValue = name;
+                    vm.editId = name;
+                    vm.show = false;
+                    vm.hide = true;
 
-                //     console.log(this.todoList);
-                    
-                // },
-
-                editForm: function (index, value) {
-                    this.listSection = false;
-                    this.updateSection = true;
-                    this.valueMatch = index;
-                    this.editValue = value;
+                    console.log(id);
+                    console.log(name);
                 }
             }
+
+            
         });
     </script>
 
