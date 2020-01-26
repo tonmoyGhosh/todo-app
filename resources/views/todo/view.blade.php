@@ -32,8 +32,8 @@
                 <li class="list-group-item" v-for="(record, index) in todoList">
                     
                     <div class="checkbox"  v-if="record.id != editTodoId">
-                        <input type="checkbox" id="checkbox" class="checkbox checkbox-circle"/>
-                        <label v-on:click="showEditInput(record.id, record.name)">
+                        <input type="checkbox" id="checkbox" class="checkbox checkbox-circle" v-on:click="deleteAction(record.id, record.name)"/>
+                        <label v-on:click="editAction(record.id, record.name)">
                             @{{ record.name }}
                         </label>
                     </div>
@@ -45,7 +45,7 @@
                 <li class="list-group-item">
                     <div class="checkbox">
                         <a href="#">All</a>
-                        <a href="#">Active</a>
+                        <a v-on:click="setDeleteTodoList()">Active</a>
                         <a href="#">Completed</a>
                     </div>
                 </li>
@@ -69,10 +69,10 @@
             data: {
                 todoValue: '',
                 editTodoValue: '',
-                editTodoId: '',
+                editTodoId: 0,
+                deleteTodoValue: '',
+                deleteTodoId: 0,
                 todoList: [],
-                insertTodoArray: [],
-                updateTodoArray: [],
                 
             },
 
@@ -112,16 +112,16 @@
                     setArr['id'] = lastId;
                     setArr['name'] = vm.todoValue;
 
-                    vm.insertTodoArray.push(setArr);
                     vm.todoList.push(setArr);
                     vm.todoValue = '';
+
+                    console.log(vm.todoList);
                 
                 },
 
-                showEditInput: function (id, name)
+                editAction: function (id, name)
                 {   
-                    let vm = this,
-                        setArr = [];
+                    let vm = this;
 
                     vm.editTodoValue = name;
                     vm.editTodoId = id;
@@ -129,13 +129,52 @@
                 },
 
                 setUpdateTodoList: function () 
+                {   
+                    let vm = this;
+
+                    for(i=0; i<vm.todoList.length; i++)
+                    {
+                        if(vm.editTodoId == vm.todoList[i].id && vm.editTodoValue != vm.todoList[i].name)
+                           vm.todoList[i].name = vm.editTodoValue;
+                    }
+
+                    vm.editTodoValue = '';
+                    vm.editTodoId = 0;
+
+                    console.log(vm.todoList);
+                },
+
+                deleteAction: function (id, name) 
                 {
-                    setArr['id'] = vm.editTodoValue;
-                    setArr['name'] = vm.editTodoId;
+                    let vm = this;
+
+                    vm.deleteTodoValue = name;
+                    vm.deleteTodoId = id;
+
+                },
+
+                setDeleteTodoList: function () 
+                {
+                    let vm = this;
+
+                    for(i=0; i<vm.todoList.length; i++)
+                    {
+                        if(vm.deleteTodoId == vm.todoList[i].id && vm.deleteTodoValue == vm.todoList[i].name)
+                           vm.todoList.splice(i, 1);
+                    }
+
                     
-                    vm.updateTodoArray.push(setArr);
-                    console.log(vm.updateTodoArray);
+                    document.getElementById("checkbox").checked = false;
+                    vm.editTodoValue = '';
+                    vm.deleteTodoId = 0;
+
+                    console.log(vm.todoList);
+
+                    console.log(vm.deleteTodoValue);
+                    console.log(vm.deleteTodoId);
                 }
+
+
             }
         });
     </script>
