@@ -94,6 +94,22 @@
 
             methods: {
 
+                fetchTodoList: function () 
+                {
+                    let vm = this;
+
+                    axios.get("api/todoList")
+                        .then(function(response) {
+                        
+                            if(response.data.status == true)
+                                vm.todoList = response.data.data;
+                        
+                        })
+                        .catch(function(err) {
+                        console.log(err);
+                        })
+                },
+
                 setTodoList: function ()
                 {   
                     let vm = this,
@@ -125,7 +141,6 @@
 
                     vm.editTodoValue = name;
                     vm.editTodoId = id;
-
                 },
 
                 setUpdateTodoList: function () 
@@ -163,7 +178,6 @@
                            vm.todoList.splice(i, 1);
                     }
 
-                    
                     document.getElementById("checkbox").checked = false;
                     vm.editTodoValue = '';
                     vm.deleteTodoId = 0;
