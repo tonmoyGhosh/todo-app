@@ -224,50 +224,48 @@
 
                     if(vm.activeOn == true)
                     {   
-                        let data = {};
+                        let data = [];
 
                         for(i=0; i<vm.todoList.length; i++)
-                        {
+                        {   
                             data[i] = {
                                 id: vm.todoList[i].id,
                                 name: vm.todoList[i].name
                             }
                         }
 
-                        axios.get('api/todoGenerate', {
-                            data: {
-                                myArray: JSON.stringify(data)
-                            }
-                            }).then(res => console.log(res))
+                        
 
-                        // let json = JSON.stringify(vm.todoList);
+                        // const options = {
+                        //     url: 'api/todoGenerate',
+                        //     method: 'GET',
+                        //     headers: {
+                        //         'X-Requested-With': 'XMLHttpRequest',
+                        //         'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                        //     },
+                            
+                        //     data: {
+                        //         a: 10,
+                        //         b: 20
+                        //     }
+                        //     };
 
-                        // axios.post('api/todoGenerate', {
-                        //         data: data,
-                        //         headers: {
-                        //             'Content-Type': 'application/json'
-                        //         }
-                        //     })
-                        //     .then(function (response) {
+                        //     axios(options)
+                        //     .then(response => {
                         //         console.log(response);
-                        //     })
-                        //     .catch(function (error) {
-                        //         console.log(error);
                         //     });
 
-                        // axios({
-                        //     url: 'api/todoGenerate',
-                        //     method: 'post',
-                        //     data: vm.todoList
-                        // })
-                        // .then(function (response) {
-                        //     // your action after success
-                        //     console.log(response);
-                        // })
-                        // .catch(function (error) {
-                        // // your action on error success
-                        //     console.log(error);
-                        // });
+                        console.log(data);
+
+                        axios.get('api/todoGenerate?data=')
+                        .then(function (response) {
+                            console.log(response);
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+
+                      
 
                         vm.activeOn == false;
 

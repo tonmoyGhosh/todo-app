@@ -41,8 +41,13 @@ class ApiController extends Controller
         // {
         //     return $rec;
         // }
+        // $i = 1;
+        // foreach($resquest as $test)
+        // {
+        //     $i = 0 + $i;
+        // }
 
-        return json_encode($resquest['data']->data);
+        return $_GET['data'];
     }
 
    
