@@ -45,15 +45,15 @@
                 <li class="list-group-item" v-show="sectionTwo">
                     <div class="checkbox">
                         <input id="checkbox" type="checkbox" class="checkbox checkbox-circle" checked=""/>
-                        <label>@{{ tempValue }}</label>
+                        <label>@{{ deleteValue }}</label>
                     </div>
                 </li>
 
                 <li class="list-group-item">
                     <div class="checkbox">
-                        <a v-on:click="allButton()">All</a>
-                        <a v-on:click="actionButton()">Active</a>
-                        <a v-on:click="completeButton()">Completed</a>
+                        <a href="javascript:void(0)" v-on:click="allButton()">All</a>
+                        <a href="javascript:void(0)" v-on:click="actionButton()">Active</a>
+                        <a href="javascript:void(0)" v-on:click="completeButton()">Completed</a>
                     </div>
                 </li>
             
@@ -82,7 +82,8 @@
                 todoList: [],
                 sectionOne: true,
                 sectionTwo: false,
-                tempValue: ''
+                deleteValue: '',
+                activeOn: false
             },
 
             created: function () {
@@ -102,25 +103,6 @@
             },
 
             methods: {
-
-                allButton: function () 
-                {
-                    let vm = this;
-
-                    vm.sectionOne = true;
-                    vm.sectionTwo = false;
-
-                    axios.get("api/todoList")
-                        .then(function(response) {
-                           
-                            if(response.data.status == true)
-                               vm.todoList = response.data.data;
-                        
-                        })
-                        .catch(function(err) {
-                           console.log(err);
-                        })
-                },
 
                 setTodoList: function ()
                 {   
@@ -144,13 +126,12 @@
                     vm.todoValue = '';
 
                     // console.log(vm.todoList);
-                
                 },
 
                 editAction: function (id, name)
                 {   
                     let vm = this;
-
+                    
                     vm.editTodoValue = name;
                     vm.editTodoId = id;
                 },
@@ -177,23 +158,44 @@
 
                     vm.deleteTodoValue = name;
                     vm.deleteTodoId = id;
+                },
 
+                allButton: function () 
+                {
+                    let vm = this;
+
+                    vm.sectionOne = true;
+                    vm.sectionTwo = false;
+
+                    axios.get("api/todoList")
+                        .then(function(response) {
+                           
+                            if(response.data.status == true)
+                               vm.todoList = response.data.data;
+                        
+                        })
+                        .catch(function(err) {
+                           console.log(err);
+                        })
                 },
 
                 actionButton: function () 
                 {
                     let vm = this;
 
-                    for(i=0; i<vm.todoList.length; i++)
-                    {
-                        if(vm.deleteTodoId == vm.todoList[i].id && vm.deleteTodoValue == vm.todoList[i].name)
-                           vm.todoList.splice(i, 1);
-                    }
-
-                    vm.tempValue = vm.deleteTodoValue;
-
                     if(vm.deleteTodoId != 0)
+                    {
+                        for(i=0; i<vm.todoList.length; i++)
+                        {
+                            if(vm.deleteTodoId == vm.todoList[i].id && vm.deleteTodoValue == vm.todoList[i].name)
+                                vm.todoList.splice(i, 1);
+                        }
+
                         document.getElementById(vm.deleteTodoId).checked = false;
+                    }
+                    
+                    vm.deleteValue = vm.deleteTodoValue;
+                    vm.activeOn = true;
 
                     vm.editTodoValue = '';
                     vm.deleteTodoId = 0;
@@ -208,11 +210,43 @@
                 {
                     let vm = this;
 
-                    vm.sectionOne = false;
-                    vm.sectionTwo = true;
+                    if(vm.deleteValue == '')
+                    {
+                        vm.sectionOne = false;
+                        vm.sectionTwo = false;
+                    }
+                    else
+                    {
+                        vm.sectionOne = false;
+                        vm.sectionTwo = true;
+                    }
+
+
+                    if(vm.activeOn == true)
+                    {   
+                        console.log(vm.todoList);
+
+                        axios.post('api/todoGenerate', vm.todoList)
+                            .then(function (response) {
+                                console.log(response);
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+
+                        vm.activeOn == false;
+
+                    }
+                    else 
+                    {
+                        vm.activeOn == false;
+                        vm.allButton();
+                    }
+                    
+
+                    // vm.sectionOne = false;
+                    // vm.sectionTwo = true;
                 }
-
-
             }
         });
     </script>

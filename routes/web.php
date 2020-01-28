@@ -13,5 +13,4 @@
 
 Route::get('/', 'ApiController@todoView');
 Route::get('api/todoList', 'ApiController@getList');
-Route::get('api/todoCreate', 'ApiController@todoCreate');
-Route::get('api/todoUpdate/{id}', 'ApiController@todoUpdate');
+Route::post('api/todoGenerate', 'ApiController@todoGenerate');

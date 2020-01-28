@@ -35,14 +35,9 @@ class ApiController extends Controller
         
     }
 
-    public function todoCreate()
+    public function todoGenerate(Request $resquest)
     {
-        
-    }
-
-    public function todoUpdate($id)
-    {
-
+        return $resquest;
     }
 
    
