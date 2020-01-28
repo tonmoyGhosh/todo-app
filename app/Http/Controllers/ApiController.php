@@ -35,9 +35,14 @@ class ApiController extends Controller
         
     }
 
-    public function todoGenerate(Request $resquest)
+    public function todoGenerate()
     {
-        return $resquest;
+        // foreach($resquest as $rec)
+        // {
+        //     return $rec;
+        // }
+
+        return json_encode($resquest['data']->data);
     }
 
    

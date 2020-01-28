@@ -224,15 +224,50 @@
 
                     if(vm.activeOn == true)
                     {   
-                        console.log(vm.todoList);
+                        let data = {};
 
-                        axios.post('api/todoGenerate', vm.todoList)
-                            .then(function (response) {
-                                console.log(response);
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            });
+                        for(i=0; i<vm.todoList.length; i++)
+                        {
+                            data[i] = {
+                                id: vm.todoList[i].id,
+                                name: vm.todoList[i].name
+                            }
+                        }
+
+                        axios.get('api/todoGenerate', {
+                            data: {
+                                myArray: JSON.stringify(data)
+                            }
+                            }).then(res => console.log(res))
+
+                        // let json = JSON.stringify(vm.todoList);
+
+                        // axios.post('api/todoGenerate', {
+                        //         data: data,
+                        //         headers: {
+                        //             'Content-Type': 'application/json'
+                        //         }
+                        //     })
+                        //     .then(function (response) {
+                        //         console.log(response);
+                        //     })
+                        //     .catch(function (error) {
+                        //         console.log(error);
+                        //     });
+
+                        // axios({
+                        //     url: 'api/todoGenerate',
+                        //     method: 'post',
+                        //     data: vm.todoList
+                        // })
+                        // .then(function (response) {
+                        //     // your action after success
+                        //     console.log(response);
+                        // })
+                        // .catch(function (error) {
+                        // // your action on error success
+                        //     console.log(error);
+                        // });
 
                         vm.activeOn == false;
 
