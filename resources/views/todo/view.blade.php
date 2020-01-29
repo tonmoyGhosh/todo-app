@@ -86,7 +86,8 @@
                 deleteValue: '',
                 activeOn: false,
                 deleteId: 0,
-                existData: false
+                existData: false,
+                tempId: 0,
             },
 
             created: function () {
@@ -159,6 +160,9 @@
                     let vm = this,
                         checkVal;
 
+                    if(vm.tempId != 0)
+                        document.getElementById(vm.tempId).checked = false;
+
                     vm.deleteTodoId = id;
                     checkVal = document.getElementById(vm.deleteTodoId).checked;
 
@@ -169,6 +173,8 @@
                         vm.deleteTodoValue = '';
                         vm.deleteTodoId = 0;
                     }
+
+                    vm.tempId = id;
                 },
 
                 allButton: function () 
