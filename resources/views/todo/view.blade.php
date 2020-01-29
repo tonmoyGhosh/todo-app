@@ -23,7 +23,7 @@
     <div id="app" class="col-sm-6 col-sm-offset-3">
         
 
-        <div class="panel-body">
+        <div class="panel-body col-sm-12">
             
             <input type="text" class="form-control" placeholder="Add Todo List" v-model="todoValue" v-on:keyup.enter="setTodoList">
             
@@ -52,9 +52,9 @@
                 <li class="list-group-item">
                     <div class="checkbox">
                         <a href="javascript:void(0)" v-on:click="allButton()">All</a>
-                        <a href="javascript:void(0)" v-on:click="actionButton()">Active</a>
-                        <a href="javascript:void(0)" v-on:click="completeButton()">Completed</a>
-                        <a href="javascript:void(0)" v-on:click="clearCompleteButton()">Clear Completed</a>
+                        <a href="javascript:void(0)" v-on:click="actionButton()" style="padding-left: 180px;">Active</a>
+                        <a href="javascript:void(0)" v-on:click="completeButton()" style="padding-left: 20px;">Completed</a>
+                        <a href="javascript:void(0)" v-on:click="clearCompleteButton()" style="padding-left: 170px;">Clear Completed</a>
                     </div>
                 </li>
             
