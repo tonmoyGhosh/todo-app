@@ -54,6 +54,7 @@
                         <a href="javascript:void(0)" v-on:click="allButton()">All</a>
                         <a href="javascript:void(0)" v-on:click="actionButton()">Active</a>
                         <a href="javascript:void(0)" v-on:click="completeButton()">Completed</a>
+                        <a href="javascript:void(0)" v-on:click="clearCompleteButton()">Clear Completed</a>
                     </div>
                 </li>
             
@@ -83,7 +84,9 @@
                 sectionOne: true,
                 sectionTwo: false,
                 deleteValue: '',
-                activeOn: false
+                activeOn: false,
+                deleteId: 0,
+                existData: false
             },
 
             created: function () {
@@ -94,8 +97,11 @@
                     .then(function(response) {
                        
                         if(response.data.status == true)
-                           vm.todoList = response.data.data;
-                    
+                            vm.todoList = response.data.data;
+                           
+                        if(vm.todoList.length != 0)
+                            vm.existData = true;
+                        else vm.existData = false;
                     })
                     .catch(function(err) {
                        console.log(err);
@@ -124,8 +130,6 @@
 
                     vm.todoList.push(setArr);
                     vm.todoValue = '';
-
-                    // console.log(vm.todoList);
                 },
 
                 editAction: function (id, name)
@@ -148,16 +152,23 @@
 
                     vm.editTodoValue = '';
                     vm.editTodoId = 0;
-
-                    // console.log(vm.todoList);
                 },
 
                 deleteAction: function (id, name) 
                 {
-                    let vm = this;
+                    let vm = this,
+                        checkVal;
 
-                    vm.deleteTodoValue = name;
                     vm.deleteTodoId = id;
+                    checkVal = document.getElementById(vm.deleteTodoId).checked;
+
+                    if(checkVal == true)
+                        vm.deleteTodoValue = name;
+                    else 
+                    {
+                        vm.deleteTodoValue = '';
+                        vm.deleteTodoId = 0;
+                    }
                 },
 
                 allButton: function () 
@@ -169,10 +180,8 @@
 
                     axios.get("api/todoList")
                         .then(function(response) {
-                           
-                            if(response.data.status == true)
+                           if(response.data.status == true)
                                vm.todoList = response.data.data;
-                        
                         })
                         .catch(function(err) {
                            console.log(err);
@@ -188,9 +197,11 @@
                         for(i=0; i<vm.todoList.length; i++)
                         {
                             if(vm.deleteTodoId == vm.todoList[i].id && vm.deleteTodoValue == vm.todoList[i].name)
+                            {   
                                 vm.todoList.splice(i, 1);
+                                vm.deleteId = vm.deleteTodoId;
+                            }
                         }
-
                         document.getElementById(vm.deleteTodoId).checked = false;
                     }
                     
@@ -199,11 +210,8 @@
 
                     vm.editTodoValue = '';
                     vm.deleteTodoId = 0;
-
-                    // console.log(vm.todoList);
-
-                    // console.log(vm.deleteTodoValue);
-                    // console.log(vm.deleteTodoId);
+                    vm.deleteTodoValue = '';
+                    vm.deleteTodoId = 0;
                 },
 
                 completeButton: function ()
@@ -221,10 +229,10 @@
                         vm.sectionTwo = true;
                     }
 
-
                     if(vm.activeOn == true)
                     {   
-                        let data = [];
+                        let data = [],
+                            token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                         for(i=0; i<vm.todoList.length; i++)
                         {   
@@ -234,40 +242,26 @@
                             }
                         }
 
-                        
+                        if(vm.existData == false)
+                            vm.deleteId = 0;
 
-                        // const options = {
-                        //     url: 'api/todoGenerate',
-                        //     method: 'GET',
-                        //     headers: {
-                        //         'X-Requested-With': 'XMLHttpRequest',
-                        //         'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                        //     },
-                            
-                        //     data: {
-                        //         a: 10,
-                        //         b: 20
-                        //     }
-                        //     };
-
-                        //     axios(options)
-                        //     .then(response => {
-                        //         console.log(response);
-                        //     });
-
-                        console.log(data);
-
-                        axios.get('api/todoGenerate?data=')
-                        .then(function (response) {
-                            console.log(response);
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
-
-                      
+                        axios.post('api/todoGenerate', {
+                                data: data,
+                                deleteId: vm.deleteId,
+                                headers: { 
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': token,
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                }
+                            }).then(function (response){
+                                console.log(response);
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
 
                         vm.activeOn == false;
+                        vm.deleteId = 0;
 
                     }
                     else 
@@ -275,10 +269,11 @@
                         vm.activeOn == false;
                         vm.allButton();
                     }
-                    
+                },
 
-                    // vm.sectionOne = false;
-                    // vm.sectionTwo = true;
+                clearCompleteButton: function () 
+                {
+                    this.sectionTwo = false;
                 }
             }
         });
